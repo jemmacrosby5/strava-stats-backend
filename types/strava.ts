@@ -26,10 +26,12 @@ export interface StravaActivity {
   max_speed?: number;
   average_heartrate?: number;
   location_country?: string | null;
+  start_latlng?: [number, number] | null;
   [key: string]: unknown;
 }
 
-// Shape of the payload Strava POSTs to webhook endpoint on any activity create/update/delete event
+// Shape of the payload Strava POSTs to webhook endpoint on any
+// activity create/update/delete event
 export interface StravaWebhookEvent {
   object_type: "activity" | "athlete";
   object_id: number;

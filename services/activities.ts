@@ -3,6 +3,7 @@
 
 import pool from "../db.js";
 import type { StravaActivity } from "../types/strava.js";
+import { getCountryFromLatLng } from "./geocode.js";
 
 const DAYS_OF_WEEK = [
   "Sunday",
@@ -22,6 +23,14 @@ const DAYS_OF_WEEK = [
 export async function upsertActivity(activity: StravaActivity): Promise<void> {
   const startDate = new Date(activity.start_date);
   const dayOfWeek = DAYS_OF_WEEK[startDate.getUTCDay()];
+
+  // Strava's own location_country field is unreliable, so derive it ourselves
+  // from GPS coordinates when available
+  const startLatLng = activity.start_latlng as
+    | [number, number]
+    | null
+    | undefined;
+  const locationCountry = await getCountryFromLatLng(startLatLng);
 
   await pool.query(
     `INSERT INTO activities (
@@ -56,7 +65,7 @@ export async function upsertActivity(activity: StravaActivity): Promise<void> {
       activity.average_speed ?? null,
       activity.max_speed ?? null,
       activity.average_heartrate ?? null,
-      activity.location_country ?? null,
+      locationCountry,
     ],
   );
 }

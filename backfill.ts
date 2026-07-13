@@ -9,6 +9,7 @@ dotenv.config();
 
 import { getAccessToken } from "./services/strava.js";
 import { upsertActivity } from "./services/activities.js";
+import { sleep } from "./services/geocode.js";
 import type { StravaActivity } from "./types/strava.js";
 
 const PER_PAGE = 200; // Strava's max page size
@@ -40,10 +41,6 @@ async function fetchActivityPage(
   return (await res.json()) as StravaActivity[];
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function backfill(): Promise<void> {
   const token = await getAccessToken();
 
@@ -62,6 +59,9 @@ async function backfill(): Promise<void> {
     for (const activity of activities) {
       await upsertActivity(activity);
       totalSaved++;
+      // Respect Nominatim's 1 request/second limit — upsertActivity calls it
+      // internally for geocoding, so we pace ourselves between activities
+      await sleep(1100);
     }
 
     console.log(
