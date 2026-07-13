@@ -1,14 +1,13 @@
 {
   "name": "strava-stats-backend",
   "version": "1.0.0",
-  "main": "index.js",
-  "keywords": [],
+  "main": "dist/index.js",
   "author": "",
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "node dist/index.js",
+    "dev": "tsx watch index.ts",
     "build": "tsc"
   },
   "dependencies": {
