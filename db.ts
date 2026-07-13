@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Pool } from "pg";
 dotenv.config();
 
-const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : 3000;
+const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432;
 
 const pool = new Pool({
   host: process.env.DB_HOST,
